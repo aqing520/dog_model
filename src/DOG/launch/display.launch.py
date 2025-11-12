@@ -42,6 +42,13 @@ def generate_launch_description():
         executable='joint_state_publisher',
     )
 
+    # #添加控制滑钮  如果gui参数为true 则启动joint_state_publisher_gui节点
+    # joint_state_publisher_gui_node = launch_ros.actions.Node(
+    #     package='joint_state_publisher_gui',
+    #     executable='joint_state_publisher_gui',
+    #     condition=launch.conditions.IfCondition(launch.substitutions.LaunchConfiguration('gui'))
+    # )
+
 
     # RViz 节点    启动rviz2  等价于 ros2 run rviz2 rviz2 -d <path_to_config>
     # arguments 是直接传的格式
