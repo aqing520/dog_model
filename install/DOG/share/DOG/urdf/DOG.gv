@@ -1,0 +1,53 @@
+digraph G {
+node [shape=box];
+"BASE_LINK" [label="BASE_LINK"];
+"FL_ABAD_LINK" [label="FL_ABAD_LINK"];
+"FL_HIP_LINK" [label="FL_HIP_LINK"];
+"FL_KNEE_LINK" [label="FL_KNEE_LINK"];
+"FL_FOOT_LINK" [label="FL_FOOT_LINK"];
+"FR_ABAD_LINK" [label="FR_ABAD_LINK"];
+"FR_HIP_LINK" [label="FR_HIP_LINK"];
+"FR_KNEE_LINK" [label="FR_KNEE_LINK"];
+"FR_FOOT_LINK" [label="FR_FOOT_LINK"];
+"RL_ABAD_LINK" [label="RL_ABAD_LINK"];
+"RL_HIP_LINK" [label="RL_HIP_LINK"];
+"RL_KNEE_LINK" [label="RL_KNEE_LINK"];
+"RL_FOOT_LINK" [label="RL_FOOT_LINK"];
+"RR_ABAD_LINK" [label="RR_ABAD_LINK"];
+"RR_HIP_LINK" [label="RR_HIP_LINK"];
+"RR_KNEE_LINK" [label="RR_KNEE_LINK"];
+"RR_FOOT_LINK" [label="RR_FOOT_LINK"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"BASE_LINK" -> "FL_ABAD_JOINT" [label="xyz: 0.17449 0.062 0 \nrpy: 0 -0 0"]
+"FL_ABAD_JOINT" -> "FL_ABAD_LINK"
+"FL_ABAD_LINK" -> "FL_HIP_JOINT" [label="xyz: 0 0.097412 0 \nrpy: 0 -0 0"]
+"FL_HIP_JOINT" -> "FL_HIP_LINK"
+"FL_HIP_LINK" -> "FL_KNEE_JOINT" [label="xyz: 0 0 -0.2 \nrpy: 0 -0 0"]
+"FL_KNEE_JOINT" -> "FL_KNEE_LINK"
+"FL_KNEE_LINK" -> "FL_FOOT_JOINT" [label="xyz: 0 0 -0.21366 \nrpy: 0 -0 0"]
+"FL_FOOT_JOINT" -> "FL_FOOT_LINK"
+"BASE_LINK" -> "FR_ABAD_JOINT" [label="xyz: 0.17449 -0.062 0 \nrpy: 0 -0 0"]
+"FR_ABAD_JOINT" -> "FR_ABAD_LINK"
+"FR_ABAD_LINK" -> "FR_HIP_JOINT" [label="xyz: 0 -0.097399 0 \nrpy: 0 -0 0"]
+"FR_HIP_JOINT" -> "FR_HIP_LINK"
+"FR_HIP_LINK" -> "FR_KNEE_JOINT" [label="xyz: 0 0 -0.2 \nrpy: 0 -0 0"]
+"FR_KNEE_JOINT" -> "FR_KNEE_LINK"
+"FR_KNEE_LINK" -> "FR_FOOT_JOINT" [label="xyz: 0 0 -0.21366 \nrpy: 0 -0 0"]
+"FR_FOOT_JOINT" -> "FR_FOOT_LINK"
+"BASE_LINK" -> "RL_ABAD_JOINT" [label="xyz: -0.17449 0.062 0 \nrpy: 0 -0 0"]
+"RL_ABAD_JOINT" -> "RL_ABAD_LINK"
+"RL_ABAD_LINK" -> "RL_HIP_JOINT" [label="xyz: 0 0.097412 0 \nrpy: 0 -0 0"]
+"RL_HIP_JOINT" -> "RL_HIP_LINK"
+"RL_HIP_LINK" -> "RL_KNEE_JOINT" [label="xyz: 0 0 -0.2 \nrpy: 0 -0 0"]
+"RL_KNEE_JOINT" -> "RL_KNEE_LINK"
+"RL_KNEE_LINK" -> "RL_FOOT_JOINT" [label="xyz: 0 0 -0.21366 \nrpy: 0 -0 0"]
+"RL_FOOT_JOINT" -> "RL_FOOT_LINK"
+"BASE_LINK" -> "RR_ABAD_JOINT" [label="xyz: -0.17449 -0.062 0 \nrpy: 0 -0 0"]
+"RR_ABAD_JOINT" -> "RR_ABAD_LINK"
+"RR_ABAD_LINK" -> "RR_HIP_JOINT" [label="xyz: 0 -0.0974 0 \nrpy: 0 -0 0"]
+"RR_HIP_JOINT" -> "RR_HIP_LINK"
+"RR_HIP_LINK" -> "RR_KNEE_JOINT" [label="xyz: 0 0 -0.2 \nrpy: 0 -0 0"]
+"RR_KNEE_JOINT" -> "RR_KNEE_LINK"
+"RR_KNEE_LINK" -> "RR_FOOT_JOINT" [label="xyz: 0 0 -0.21366 \nrpy: 0 -0 0"]
+"RR_FOOT_JOINT" -> "RR_FOOT_LINK"
+}
