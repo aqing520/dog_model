@@ -1,75 +1,108 @@
-import launch
-import launch_ros
-from ament_index_python.packages import get_package_share_directory
+import os
+
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+
+
+from launch.actions import SetEnvironmentVariable
+
+
+from ament_index_python.packages import get_package_share_directory, get_package_prefix
+
+# package_name = 'DOG'
+# pkg_share = os.path.join(get_package_share_directory(package_name))
+# pkg_prefix = get_package_prefix(package_name)
+
+# # Gazebo Harmonic 环境变量配置
+# if 'GZ_SIM_RESOURCE_PATH' in os.environ:
+#     os.environ['GZ_SIM_RESOURCE_PATH'] += os.pathsep + pkg_share
+# else:
+#     os.environ['GZ_SIM_RESOURCE_PATH'] = pkg_share
+
+
+# pkg_path = get_package_share_directory('DOG')
+
+
+# set_gz_paths = SetEnvironmentVariable(
+#     name='GZ_SIM_RESOURCE_PATH',
+#     value=f"{pkg_path}:{os.environ.get('GZ_SIM_RESOURCE_PATH', '')}"
+# )
 
 def generate_launch_description():
-    # 获取默认路径
-    robot_name_in_model = "DOG"
-    urdf_tutorial_path = get_package_share_directory('DOG')
-    default_model_path = urdf_tutorial_path + '/urdf/DOG.urdf'
-    default_world_path = urdf_tutorial_path + '/world/custom_room.world'
-    # 为 Launch 声明参数
-    action_declare_arg_mode_path = launch.actions.DeclareLaunchArgument(
-        name='model', default_value=str(default_model_path),
-        description='URDF 的绝对路径')
-    # 获取文件内容生成新的参数
-    robot_description = launch_ros.parameter_descriptions.ParameterValue(
-        launch.substitutions.Command(
-            ['xacro ', launch.substitutions.LaunchConfiguration('model')]),
-        value_type=str)
-  	
-    robot_state_publisher_node = launch_ros.actions.Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description}]
+    # 包名
+    package_name = 'DOG'
+    pkg_path = os.path.join(get_package_share_directory(package_name))
+
+    # 模型与世界文件路径
+    urdf_file = os.path.join(pkg_path, 'urdf', 'DOG.urdf')
+    world_file = os.path.join(pkg_path, 'worlds', 'empty.sdf')
+
+    # 读取 URDF 文件（非 xacro）
+    with open(urdf_file, 'r') as infp:
+        robot_description_config = infp.read()
+
+#     robot_description_config = robot_description_config.replace(
+#     'package://DOG',
+#     f'file://{pkg_path}'
+# )
+
+    # 机器人初始位姿
+    spawn_x_val = '0.0'
+    spawn_y_val = '0.0'
+    spawn_z_val = '0.3'
+    spawn_yaw_val = '0.0'
+
+    # 启动 Gazebo Harmonic
+    pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
+        launch_arguments={'gz_args': '-r ' + world_file}.items(),
     )
 
-    # 通过 IncludeLaunchDescription 包含另外一个 launch 文件
-    launch_gazebo = launch.actions.IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([get_package_share_directory(
-            'gazebo_ros'), '/launch', '/gazebo.launch.py']),
-      	# 传递参数
-        launch_arguments=[('world', default_world_path),('verbose','true')]
-    )
-    # 请求 Gazebo 加载机器人
-    spawn_entity_node = launch_ros.actions.Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        arguments=['-topic', '/robot_description',
-                   '-entity', robot_name_in_model, ])
-    
-    # 加载并激活 fishbot_joint_state_broadcaster 控制器
-    load_joint_state_controller = launch.actions.ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-            'fishbot_joint_state_broadcaster'],
+    # 启动 ROS-Gazebo 桥接的模型生成节点
+    spawn_entity = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-topic', 'robot_description',
+            '-name', 'dog_model',
+            '-x', spawn_x_val,
+            '-y', spawn_y_val,
+            '-z', spawn_z_val,
+            '-Y', spawn_yaw_val
+        ],
         output='screen'
     )
 
-    # 加载并激活 fishbot_effort_controller 控制器
-    load_fishbot_effort_controller = launch.actions.ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','fishbot_effort_controller'], 
-        output='screen')
-    
-    load_fishbot_diff_drive_controller = launch.actions.ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','fishbot_diff_drive_controller'], 
-        output='screen')
-    
-    return launch.LaunchDescription([
-        action_declare_arg_mode_path,
-        robot_state_publisher_node,
-        launch_gazebo,
-        spawn_entity_node,
-        # 事件动作，当加载机器人结束后执行    
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=spawn_entity_node,
-                on_exit=[load_joint_state_controller],)
-            ),
-        # 事件动作，load_fishbot_diff_drive_controller
-        launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=load_joint_state_controller,
-            on_exit=[load_fishbot_diff_drive_controller],)
-            ),
+    # 启动 robot_state_publisher
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': robot_description_config,
+            'use_sim_time': True
+        }]
+    )
+
+    # ROS-Gazebo 桥
+    ros_gz_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        parameters=[{
+            'config_file': os.path.join(pkg_path, 'config', 'dog.yaml'),
+            'qos_overrides./tf_static.publisher.durability': 'transient_local',
+        }],
+        output='screen'
+    )
+
+    # 启动所有节点
+    return LaunchDescription([
+        gazebo,
+        spawn_entity,
+        ros_gz_bridge,
+        node_robot_state_publisher,
     ])

@@ -1,4 +1,5 @@
 import os
+from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
@@ -9,26 +10,12 @@ from launch_ros.actions import Node
 from launch.actions import SetEnvironmentVariable
 
 
-from ament_index_python.packages import get_package_share_directory, get_package_prefix
+pkg_path = get_package_share_directory('DOG')
 
-# package_name = 'DOG'
-# pkg_share = os.path.join(get_package_share_directory(package_name))
-# pkg_prefix = get_package_prefix(package_name)
-
-# # Gazebo Harmonic 环境变量配置
-# if 'GZ_SIM_RESOURCE_PATH' in os.environ:
-#     os.environ['GZ_SIM_RESOURCE_PATH'] += os.pathsep + pkg_share
-# else:
-#     os.environ['GZ_SIM_RESOURCE_PATH'] = pkg_share
-
-
-# pkg_path = get_package_share_directory('DOG')
-
-
-# set_gz_paths = SetEnvironmentVariable(
-#     name='GZ_SIM_RESOURCE_PATH',
-#     value=f"{pkg_path}:{os.environ.get('GZ_SIM_RESOURCE_PATH', '')}"
-# )
+set_gz_paths = SetEnvironmentVariable(
+    name='GZ_SIM_RESOURCE_PATH',
+    value=f"{pkg_path}:{os.environ.get('GZ_SIM_RESOURCE_PATH', '')}"
+)
 
 def generate_launch_description():
     # 包名
@@ -43,10 +30,10 @@ def generate_launch_description():
     with open(urdf_file, 'r') as infp:
         robot_description_config = infp.read()
 
-#     robot_description_config = robot_description_config.replace(
-#     'package://DOG',
-#     f'file://{pkg_path}'
-# )
+    robot_description_config = robot_description_config.replace(
+    'package://DOG',
+    f'file://{pkg_path}'
+)
 
     # 机器人初始位姿
     spawn_x_val = '0.0'
@@ -101,6 +88,7 @@ def generate_launch_description():
 
     # 启动所有节点
     return LaunchDescription([
+        set_gz_paths,
         gazebo,
         spawn_entity,
         ros_gz_bridge,

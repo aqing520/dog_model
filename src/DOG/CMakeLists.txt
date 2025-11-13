@@ -26,7 +26,7 @@ endif()
 
 # 安装资源文件（等价于 ROS1 中的 install(DIRECTORY ...)）
 install(
-  DIRECTORY config launch meshes urdf worlds
+  DIRECTORY config launch meshes urdf worlds models
   DESTINATION share/${PROJECT_NAME}
 )
 
