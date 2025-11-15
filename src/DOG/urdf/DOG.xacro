@@ -6,5 +6,5 @@
   
   <!-- 包含 Gazebo 配置 -->
   <xacro:include filename="$(find DOG)/urdf/DOG.gazebo.xacro"/>
-
+  <!--  -->
 </robot>
