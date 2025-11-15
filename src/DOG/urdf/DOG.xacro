@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="DOG">
+
+  <!-- 包含原始 URDF (将其转换为 xacro 引用) -->
+  <xacro:include filename="$(find DOG)/urdf/DOG.urdf"/>
+  
+  <!-- 包含 Gazebo 配置 -->
+  <xacro:include filename="$(find DOG)/urdf/DOG.gazebo.xacro"/>
+
+</robot>

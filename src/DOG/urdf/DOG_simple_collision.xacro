@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- 简化碰撞几何体配置 - 使用基本形状代替网格 -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <!-- 为所有链接添加简化的碰撞几何体 -->
+  <xacro:macro name="simple_box_collision" params="link_name size_x size_y size_z">
+    <gazebo reference="${link_name}">
+      <collision name="${link_name}_simple_collision">
+        <geometry>
+          <box>
+            <size>${size_x} ${size_y} ${size_z}</size>
+          </box>
+        </geometry>
+      </collision>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- 为基座添加简化碰撞 -->
+  <gazebo reference="BASE_LINK">
+    <visual>
+      <geometry>
+        <box>
+          <size>0.35 0.15 0.08</size>
+        </box>
+      </geometry>
+    </visual>
+  </gazebo>
+
+  <!-- 注意：这个文件是临时解决方案，真正的解决方法是在 URDF 中
+       为每个 link 的 collision 部分使用基本形状而不是 mesh -->
+
+</robot>

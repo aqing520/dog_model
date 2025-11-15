@@ -7,9 +7,16 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(urdf REQUIRED)
+find_package(xacro REQUIRED)
+find_package(robot_state_publisher REQUIRED)
+# joint_state_publisher 和 rviz2 是纯 Python/可执行包，不需要 find_package
+# find_package(joint_state_publisher REQUIRED)
+# find_package(joint_state_publisher_gui REQUIRED)
+# find_package(rviz2 REQUIRED)
+# 暂时注释掉 Gazebo 包，它们可能未安装
+# find_package(ros_gz_sim REQUIRED)
+# find_package(ros_gz_bridge REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -26,7 +33,7 @@ endif()
 
 # 安装资源文件（等价于 ROS1 中的 install(DIRECTORY ...)）
 install(
-  DIRECTORY config launch meshes urdf worlds models
+  DIRECTORY config launch meshes urdf worlds
   DESTINATION share/${PROJECT_NAME}
 )
 

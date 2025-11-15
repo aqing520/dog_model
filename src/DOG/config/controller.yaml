@@ -1,0 +1,26 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+position_controller:
+  ros__parameters:
+    joints:
+      - FL_ABAD_JOINT
+      - FL_HIP_JOINT
+      - FL_KNEE_JOINT
+      - FR_ABAD_JOINT
+      - FR_HIP_JOINT
+      - FR_KNEE_JOINT
+      - RR_ABAD_JOINT
+      - RR_HIP_JOINT
+      - RR_KNEE_JOINT
+      - RL_ABAD_JOINT
+      - RL_HIP_JOINT
+      - RL_KNEE_JOINT
+    interface_name: position
